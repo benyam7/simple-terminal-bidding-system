@@ -2,7 +2,7 @@ package data;
 
 import java.util.HashMap;
 
-public  class Database extends HashMap{
+public  class Database extends HashMap<String, Object>{
     private static  Database db;
 
     private Database(){}
