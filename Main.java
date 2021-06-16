@@ -3,10 +3,15 @@ import java.util.Date;
 import java.util.Scanner;
 import data.Database;
 import data.models.*;
+import repository.AuctionRepository;
+import repository.RepositoryFactory;
+import repository.UserRepository;
 
 public class Main {
     
     private static  Database db;
+    private static AuctionRepository auctionRepo;
+    private static UserRepository userRepo;
     public static void main(String[] args){
         System.out.println("Welcome to Bidding System");
          // setup db
@@ -102,19 +107,24 @@ public class Main {
 
     private static void setUpDb() {
        db  = Database.createDb();
-       db.put("users", new ArrayList<User>());
-       ArrayList<User> users = (ArrayList) db.get("users");
-       users.add(new User(
-         "username",
-     " password",
-        0, 0, 0
-       ));
+       RepositoryFactory  factory = new RepositoryFactory();
 
-       db.put("auctions", new ArrayList<Auction>());
-       db.put("currentUserName", "" );
-        System.out.println("database set up");
+       auctionRepo = (AuctionRepository) factory.getRepository("auctionRepository", db);
+       userRepo = (UserRepository) factory.getRepository("userRepository", db);
 
-        System.out.println(db.toString());
+    //    db.put("users", new ArrayList<User>());
+    //    ArrayList<User> users = (ArrayList) db.get("users");
+    //    users.add(new User(
+    //      "username",
+    //  " password",
+    //     0, 0, 0
+    //    ));
+
+       userRepo.setUpRepo("users", new ArrayList<User>());
+       auctionRepo.setUpRepo("auctions",  new ArrayList<Auction>());
+      
+
+      System.out.println(db.toString());
     }
 
     private static void handleAccountCreation() {

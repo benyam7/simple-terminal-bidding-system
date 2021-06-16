@@ -1,11 +1,20 @@
 package repository;
 
+import java.util.ArrayList;
+
+import data.Database;
 import data.models.Auction;
+import data.models.BaseModel;
 import data.models.Bid;
 import services.AuctionServices;
 
-public class AuctionRepository implements AuctionServices {
+public class AuctionRepository   implements AuctionServices, Repository{
 
+    private Database  db;
+
+    public AuctionRepository(Database db){
+        this.db = db;
+    }
     @Override
     public String postAction(Auction action) {
         System.out.println("posted action");
@@ -35,6 +44,10 @@ public class AuctionRepository implements AuctionServices {
         System.out.println("got bid detail");
         return null;
     }
+    public void setUpRepo(String collectionName, ArrayList<Auction> collection) {
+       this.db.put(collectionName, collection);
+    }
+   
 
     
 }

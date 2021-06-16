@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 import data.models.Bid;
+import data.models.BaseModel;
 
-public class Auction {
+public class Auction extends BaseModel{
     private String id;
     private Item item;
     private String  ownerId;

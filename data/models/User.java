@@ -2,7 +2,7 @@ package data.models;
 
 import java.util.UUID;
 
-public class User{
+public class User extends BaseModel{
     private String id;
     private String username;
     private String password;

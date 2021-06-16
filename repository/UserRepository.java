@@ -1,15 +1,18 @@
 package repository;
 
+import java.util.ArrayList;
+
 import data.Database;
 import services.UserService;
+import data.models.BaseModel;
 import data.models.User;
 
-public class UserRepository implements UserService {
+public class UserRepository   implements UserService, Repository{
 
-    private Database  database;
+    private Database  db;
 
     public UserRepository(Database db){
-        this.database = db;
+        this.db = db;
     }
     @Override
     public String createUser(User user) {
@@ -40,6 +43,13 @@ public class UserRepository implements UserService {
         System.out.println("got user");
         return null;
     }
+
+    public void setUpRepo(String collectionName, ArrayList<User> collection) {
+       this.db.put(collectionName, collection);
+       this.db.put("currentUserName", "" );
+        System.out.println("database set up");
+    }
+
 
     
 }
