@@ -16,5 +16,9 @@ public class Bid {
         this.amount = amount;
     }
 
+    public String getAuctionId(){
+        return this.auctionId;
+    }
+
 
 }

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import data.Database;
 import services.UserService;
-import data.models.BaseModel;
 import data.models.User;
 
 public class UserRepository   implements UserService, Repository{
@@ -17,7 +16,9 @@ public class UserRepository   implements UserService, Repository{
     @Override
     public String createUser(User user) {
         // this.database.add(user);
-        System.out.println("User Added");
+        ArrayList<User> users = (ArrayList<User>) this.db.get("users");
+        users.add(user);
+        System.out.println("User created");
         return null;
     }
 
@@ -49,7 +50,17 @@ public class UserRepository   implements UserService, Repository{
        this.db.put("currentUserName", "" );
         System.out.println("database set up");
     }
-
+    // @Override
+    // public ArrayList<User> getUsers() {
+        // return (ArrayList<User>) this.db.get("users");
+    // }
+  
+    @Override
+    public ArrayList<User> getUsers() {
+        
+        ArrayList<User> users =  (ArrayList<User>) this.db.get("users");
+        return users;   
+    }
 
     
 }

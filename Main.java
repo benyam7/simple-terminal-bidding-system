@@ -1,6 +1,9 @@
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
+
+import javax.xml.transform.URIResolver;
+
 import data.Database;
 import data.models.*;
 import repository.AuctionRepository;
@@ -30,7 +33,9 @@ public class Main {
         //    // got to user settings
         //        handleUserSettings();
 
-        // // if no account 
+        // // if no account  db.put("users", new ArrayList<User>());
+       db.put("currentUserName", "" );
+       System.out.println("database set up");
         //   // create account 
         //    handleAccountCreation();
         //   // get back to auction system
@@ -68,8 +73,9 @@ public class Main {
        
         // check if username  exists
         // get all users and loop
-        ArrayList<User> users =  (ArrayList<User>) db.get("users");
-
+        // ArrayList<User> users =  (ArrayList<User>) db.get("users");
+        ArrayList<User> users =  userRepo.getUsers();
+    
        boolean isAutehnticated = false;
        for( User user : users){
            System.out.println(user.getUsername());
@@ -136,9 +142,11 @@ public class Main {
        
         // check if username already exists
         // get all users and loop
-        ArrayList<User> users =  (ArrayList<User>) db.get("users");
+        // ArrayList<User> users =  (ArrayList<User>) db.get("users");
+        ArrayList<User> users =  userRepo.getUsers();
+    
 
-        // System.out.println(users.toString());
+        // check if user already exists
         for( User user : users){
           if(usernameInput.equals(user.getUsername())){
               System.out.println("user already exists");
@@ -150,7 +158,8 @@ public class Main {
         String passwordInput = System.console().readLine();
 
         // if not create one based on user input
-        users.add(new User(usernameInput.toString() , passwordInput.toString(), 0, 0, 0));
+        userRepo.createUser(new User(usernameInput.toString() , passwordInput.toString(), 0, 0, 0));
+        // users.add(new User(usernameInput.toString() , passwordInput.toString(), 0, 0, 0));
 
        // take user to auction system to login
        handleFirstChoice();
@@ -205,33 +214,24 @@ public class Main {
         System.out.println("How much to do you want to bid on ?");
         String bidAmoutInput = System.console().readLine();
 
+        // just bid on it
+        boolean isAuctionIdCorrect = auctionRepo.bid( new Bid((String)db.get("currentUserName"), itemIdInput, Double.parseDouble( bidAmoutInput)));
         // get list of auctions first
-
-        ArrayList<Auction> auctions = (ArrayList<Auction>) db.get("auctions");
-
-        boolean isAuctionIdCorrect = false;
-        // find the auction by id 
-        for(Auction auction: auctions){
-            if(auction.getId().equals(itemIdInput)){
-                auction.addBidOnAuction(new Bid((String)db.get("currentUserName"), auction.getId(), Double.parseDouble( bidAmoutInput)));
-                isAuctionIdCorrect = true;
-                // list the auctions , like trying to verify
-                handelListOfAuctions();
-            }
-        }
-         // validate if the acution doesnt' exist anymore, redo the thing
+        
+        
+      // validate if the acution doesnt' exist anymore, redo the thing
          if(isAuctionIdCorrect == false){
             System.out.println("Auction id doesn't match");
-            handleAuctionSystem();
          }
         // 
+        handleAuctionSystem();
 
     }
 
     private static void handelListOfAuctions() {
         System.out.println("Current list of auctions");
         // get the auctions form db
-        ArrayList<Auction> auctions = (ArrayList<Auction>) db.get("auctions");
+        ArrayList<Auction> auctions = auctionRepo.getAuctions();
         
         if(auctions.isEmpty()){
             System.out.println();
@@ -281,16 +281,22 @@ public class Main {
         Date endTime = getEndTimeFromLength(lengthOfAuctionInput);
 
         // put the details on auctions 
-        ArrayList<Auction> auctions = (ArrayList<Auction>) db.get("auctions");
-
+        // ArrayList<Auction> auctions = (ArrayList<Auction>) db.get("auctions");
+        // ArrayList<Auction> auctions = auctionRepo.getAuctions();
+        
         // store auction to db
-        auctions.add(new Auction(new Item(
+        auctionRepo.addAuction(new Auction(new Item(
             nameInput,
             descriptionInput
         ), (String) db.get("currentUserName"), new ArrayList<Bid>(), new Date(), endTime, initialPriceInput));
+
+        // auctions.add(new Auction(new Item(
+        //     nameInput,
+        //     descriptionInput
+        // ), (String) db.get("currentUserName"), new ArrayList<Bid>(), new Date(), endTime, initialPriceInput));
         
 
-        System.out.println("You're auction has been posted");
+        
 
         // take them to list of auctions
         handelListOfAuctions();
