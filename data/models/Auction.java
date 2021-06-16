@@ -2,6 +2,8 @@ package data.models;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.UUID;
+import data.models.Bid;
 
 public class Auction {
     private String id;
@@ -13,7 +15,7 @@ public class Auction {
     private Double intialPrice;
 
 
-   public Auction(String id,
+   public Auction(
    Item item,
    String ownerId,
    ArrayList<Bid> bids,
@@ -21,7 +23,7 @@ public class Auction {
    Date  endTime,
    Double intialPrice
    ){
-       this.id = id;
+       this.id =  UUID.randomUUID().toString();
        this.item = item;
        this.ownerId = ownerId;
        this.bids = bids;
@@ -32,6 +34,10 @@ public class Auction {
 
    public Item getItem(){
        return this.item;
+   }
+
+   public String getId(){
+       return this.id;
    }
 
    public String getOwner(){
@@ -48,5 +54,9 @@ public class Auction {
 
    public Date getEndTime(){
        return this.endTime;
+   }
+
+   public void addBidOnAuction(Bid bid){
+       this.bids.add(bid);
    }
 }

@@ -7,7 +7,6 @@ import data.models.*;
 public class Main {
     
     private static  Database db;
-    private static Scanner input;
     public static void main(String[] args){
         System.out.println("Welcome to Bidding System");
          // setup db
@@ -75,7 +74,25 @@ public class Main {
               isAutehnticated = true;
               //set current user
               db.put("currentUserName", user.getUsername());
-              handleAuctionSystem();
+
+           
+            
+              while(true){
+                System.out.println("1 to Auction system\n2 to user settings");
+                String choice = System.console().readLine();
+                if(choice.equals("1")){ 
+
+                    handleAuctionSystem();
+
+                 } else if(choice.equals("2")){
+                     handleUserSettings();
+                 } else {
+                     System.out.println("unsupported input ");
+                 }
+              }
+           
+             
+             
               
           }
         }
@@ -96,7 +113,6 @@ public class Main {
        db.put("users", new ArrayList<User>());
        ArrayList<User> users = (ArrayList) db.get("users");
        users.add(new User(
-        "id",
          "username",
      " password",
         0, 0, 0
@@ -132,7 +148,7 @@ public class Main {
         String passwordInput = System.console().readLine();
 
         // if not create one based on user input
-        users.add(new User("id",usernameInput.toString() , passwordInput.toString(), 0, 0, 0));
+        users.add(new User(usernameInput.toString() , passwordInput.toString(), 0, 0, 0));
 
        // take user to auction system to login
        handleFirstChoice();
@@ -177,6 +193,37 @@ public class Main {
     }
 
     private static void handelBidOnAuction() {
+        // ask on what item the user is biding on (id)
+        // ask bid amount
+        // save who's biding (the current user)
+
+        System.out.println("Enter id of item you're bidding ");
+        String itemIdInput = System.console().readLine();
+
+        System.out.println("How much to do you want to bid on ?");
+        String bidAmoutInput = System.console().readLine();
+
+        // get list of auctions first
+
+        ArrayList<Auction> auctions = (ArrayList<Auction>) db.get("auctions");
+
+        boolean isAuctionIdCorrect = false;
+        // find the auction by id 
+        for(Auction auction: auctions){
+            if(auction.getId().equals(itemIdInput)){
+                auction.addBidOnAuction(new Bid((String)db.get("currentUserName"), auction.getId(), Double.parseDouble( bidAmoutInput)));
+                isAuctionIdCorrect = true;
+                // list the auctions , like trying to verify
+                handelListOfAuctions();
+            }
+        }
+         // validate if the acution doesnt' exist anymore, redo the thing
+         if(isAuctionIdCorrect == false){
+            System.out.println("Auction id doesn't match");
+            handleAuctionSystem();
+         }
+        // 
+
     }
 
     private static void handelListOfAuctions() {
@@ -184,10 +231,17 @@ public class Main {
         // get the auctions form db
         ArrayList<Auction> auctions = (ArrayList<Auction>) db.get("auctions");
         
+        if(auctions.isEmpty()){
+            System.out.println();
+            System.out.println("===========NO AUCTIONS AVAILIABLE YET===================");
+            handleAuctionSystem();
+            return;
+        }
         // show  details of each auction
         for(Auction auction : auctions){
             System.out.println();
             System.out.println("==============================");
+            System.out.println("Auction ID: " + auction.getId());
             System.out.println("Posted by: " + auction.getOwner());
             System.out.println("current bids on item: " + auction.getBids());
             System.out.println("Initial price: " + auction.getIntialPrice());
@@ -197,6 +251,8 @@ public class Main {
             System.out.println("==============================");
             System.out.println();
         }
+
+        handleAuctionSystem();
 
     }
 
@@ -226,8 +282,7 @@ public class Main {
         ArrayList<Auction> auctions = (ArrayList<Auction>) db.get("auctions");
 
         // store auction to db
-        auctions.add(new Auction("id", new Item(
-            "id",
+        auctions.add(new Auction(new Item(
             nameInput,
             descriptionInput
         ), (String) db.get("currentUserName"), new ArrayList<Bid>(), new Date(), endTime, initialPriceInput));

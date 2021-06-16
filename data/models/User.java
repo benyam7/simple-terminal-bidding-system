@@ -1,4 +1,7 @@
 package data.models;
+
+import java.util.UUID;
+
 public class User{
     private String id;
     private String username;
@@ -17,13 +20,13 @@ public class User{
         return this.username;
     }
 
-    public User(String id,
+    public User(
     String username, 
     String password, 
     int totalItemsSold, 
     int totalAmountSpent, 
     int totalAuctionsWon  ){
-        this.id = id;
+        this.id =  UUID.randomUUID().toString();
         this.username = username;
         this.password = password;
         this.totalItemsSold = totalItemsSold;
