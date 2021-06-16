@@ -15,4 +15,6 @@ public class Bid {
         this.auctionId = auctionId;
         this.amount = amount;
     }
+
+
 }

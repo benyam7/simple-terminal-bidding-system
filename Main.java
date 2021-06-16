@@ -55,7 +55,7 @@ public class Main {
     private static void handelLogIn() {
         System.out.println("Log in proccess");
 
-        System.out.println("Enter your username\nUsename: ");
+        System.out.println("Enter your username\nUsername: ");
 
         String usernameInput = System.console().readLine();
         System.out.println("Enter password");
@@ -69,30 +69,22 @@ public class Main {
        for( User user : users){
            System.out.println(user.getUsername());
            System.out.println(user.getPassword());
-          if(usernameInput.equals(user.getUsername())){
-              if(passwordInput.equals(user.getPassword()))
+          if(usernameInput.equals(user.getUsername()) && passwordInput.equals(user.getPassword())){
               isAutehnticated = true;
               //set current user
               db.put("currentUserName", user.getUsername());
 
-           
-            
-              while(true){
                 System.out.println("1 to Auction system\n2 to user settings");
                 String choice = System.console().readLine();
                 if(choice.equals("1")){ 
-
                     handleAuctionSystem();
 
                  } else if(choice.equals("2")){
                      handleUserSettings();
                  } else {
                      System.out.println("unsupported input ");
+                     handelLogIn();
                  }
-              }
-           
-             
-             
               
           }
         }
@@ -136,7 +128,7 @@ public class Main {
         // get all users and loop
         ArrayList<User> users =  (ArrayList<User>) db.get("users");
 
-        System.out.println(users.toString());
+        // System.out.println(users.toString());
         for( User user : users){
           if(usernameInput.equals(user.getUsername())){
               System.out.println("user already exists");
@@ -301,8 +293,102 @@ public class Main {
     }
 
     private static void handleUserSettings() {
+        System.out.println("=========USER SETTINGS===========");
+        System.out.println("1 to update user name and password\n2 to delete user from system");
+        
+        String input = System.console().readLine();
+
+        if(input.equals("1")){
+            handelUserUpdate();
+        }else if (input.equals("2")){
+            handelUserDelete();
+        } else {
+            System.out.println("unsupported input");
+            handleUserSettings();
+        }
         // update user name and password
         // delete user
+    }
+
+    private static void handelUserDelete() {
+        System.out.println("Are you sure you want to delete current user?\n1 to contiue deleting\n2 to stop deleting");
+        String choice = System.console().readLine();
+        if(choice.equals("1")){
+            // verify user by prev password
+            // do the actuall delete
+
+            ArrayList<User> users = (ArrayList<User>) db.get("users");
+
+            for (User user : users){
+                if(user.getUsername().equals(db.get("currentUserName"))){
+                    // found the user to delet
+                    // validate by previous password
+                    // allow user to delete
+                    // take back to login
+
+                    System.out.println("Enter previous password ");
+                    String prevPassInput = System.console().readLine();
+            
+                    if(prevPassInput.equals(user.getPassword())){
+                        // user verified to delete
+
+                        // do the actual delete
+                        users.remove(user);
+                        System.out.println("=========User deleted successfully!=============");
+                        handleFirstChoice();
+    
+                    }else {
+                        System.out.println("Previous password dont match");
+                        handelUserUpdate();
+                    }
+                   
+    
+                 return;
+                }
+        } 
+    }
+}
+
+    private static void handelUserUpdate() {
+        // if user is hear, it means it already autehncated
+        // find and replace user from 'users'
+        ArrayList<User> users = (ArrayList<User>) db.get("users");
+
+        for (User user : users){
+            if(user.getUsername().equals(db.get("currentUserName"))){
+                // found the user to update
+                // validate by previous password
+                // allow user to change user name and pass
+
+                System.out.println("Enter previous password ");
+                String prevPassInput = System.console().readLine();
+        
+                if(prevPassInput.equals(user.getPassword())){
+                    // user verified to update
+                    System.out.println("Enter new user name");
+                    String newUserNameInput = System.console().readLine();
+                    System.out.println("Enter new password");
+                    String newPasswordInput = System.console().readLine();
+
+                    // do the actual update
+
+                    user.setPassword(newPasswordInput);
+                    user.setUserName(newUserNameInput);
+                    // user account update, take back to the log in 
+                    System.out.println("=========User updated successfully!=============");
+                    handleFirstChoice();
+
+                }else {
+                    System.out.println("Previous password dont match");
+                    handelUserUpdate();
+                }
+               
+
+             return;
+            }
+        }
+        
+
     }
 
 
