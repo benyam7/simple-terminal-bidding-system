@@ -6,8 +6,8 @@ import data.models.User;
 
 public interface UserService {
     String createUser(User user);
-    String  updateUser(String id);
-    String deleteUser(String id);
+    boolean  updateUser(String id, String username, String password);
+    boolean deleteUser(String username);
     User getPublicProfile(String id);
     ArrayList<User> getUsers();
 }

@@ -13,6 +13,7 @@ public class Bid {
         this.id =  UUID.randomUUID().toString();
         this.userName = userName;
         this.auctionId = auctionId;
+
         this.amount = amount;
     }
 

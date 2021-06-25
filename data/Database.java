@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 public  class Database extends HashMap<String, Object>{
     private static  Database db;
-
+    
     private Database(){}
 
     public static  Database  createDb(){

@@ -1,8 +1,5 @@
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Scanner;
-
-import javax.xml.transform.URIResolver;
 
 import data.Database;
 import data.models.*;
@@ -15,12 +12,39 @@ public class Main {
     private static  Database db;
     private static AuctionRepository auctionRepo;
     private static UserRepository userRepo;
+    
     public static void main(String[] args){
         System.out.println("Welcome to Bidding System");
          // setup db
-        setUpDb();
-        handleFirstChoice();
+        // setUpDb();
+        // handleFirstChoice();
+        System.out.println(computeJoinPoint(57, 78));
 
+
+    }
+
+    public static int computeJoinPoint(int s1, int s2){
+        int jS1 = s1;
+        int jS2 = s2;
+
+
+        while (jS1 != jS2){
+
+            String s1S = ""+ jS1;
+            String s2S = ""+ jS2;
+            String[] s1Arr = s1S.split("");
+            String[] s2Arr = s2S.split("");
+
+            for (String x: s1Arr){
+                jS1 += Integer.parseInt(x);
+            }
+
+            for (String x: s2Arr){
+                jS2 += Integer.parseInt(x);
+            }
+        }
+
+        return jS1;
     }
 
     private static void handleFirstChoice() {
@@ -329,83 +353,61 @@ public class Main {
     private static void handelUserDelete() {
         System.out.println("Are you sure you want to delete current user?\n1 to contiue deleting\n2 to stop deleting");
         String choice = System.console().readLine();
+        
         if(choice.equals("1")){
             // verify user by prev password
             // do the actuall delete
 
-            ArrayList<User> users = (ArrayList<User>) db.get("users");
-
-            for (User user : users){
-                if(user.getUsername().equals(db.get("currentUserName"))){
-                    // found the user to delet
-                    // validate by previous password
-                    // allow user to delete
-                    // take back to login
-
-                    System.out.println("Enter previous password ");
-                    String prevPassInput = System.console().readLine();
-            
-                    if(prevPassInput.equals(user.getPassword())){
-                        // user verified to delete
-
-                        // do the actual delete
-                        users.remove(user);
-                        System.out.println("=========User deleted successfully!=============");
-                        handleFirstChoice();
-    
-                    }else {
+            System.out.println("Enter previous password ");
+            String prevPassInput = System.console().readLine();
+            ArrayList<User> users = userRepo.getUsers();
+            for (User user: users){
+                if(((String)db.get("currentUserName")).equals(user.getUsername())){
+                    if (user.getPassword().equals(prevPassInput)){
+                        userRepo.deleteUser(user.getUsername());
+                        
+                         System.out.println("=========User deleted successfully!=============");
+                         handleFirstChoice();
+                        
+                    }else{
                         System.out.println("Previous password dont match");
-                        handelUserUpdate();
-                    }
-                   
-    
-                 return;
+                        handelUserDelete();
+                       }
+                return;
                 }
+            }
+          
         } 
     }
-}
+
 
     private static void handelUserUpdate() {
         // if user is hear, it means it already autehncated
         // find and replace user from 'users'
+        System.out.println("Enter previous password ");
+        String prevPassInput = System.console().readLine();
         ArrayList<User> users = (ArrayList<User>) db.get("users");
-
         for (User user : users){
             if(user.getUsername().equals(db.get("currentUserName"))){
-                // found the user to update
-                // validate by previous password
-                // allow user to change user name and pass
-
-                System.out.println("Enter previous password ");
-                String prevPassInput = System.console().readLine();
-        
                 if(prevPassInput.equals(user.getPassword())){
-                    // user verified to update
                     System.out.println("Enter new user name");
                     String newUserNameInput = System.console().readLine();
                     System.out.println("Enter new password");
                     String newPasswordInput = System.console().readLine();
-
-                    // do the actual update
-
-                    user.setPassword(newPasswordInput);
-                    user.setUserName(newUserNameInput);
+                    userRepo.updateUser(user.getId(), newUserNameInput, newPasswordInput);
+     
                     // user account update, take back to the log in 
                     System.out.println("=========User updated successfully!=============");
                     handleFirstChoice();
-
-                }else {
-                    System.out.println("Previous password dont match");
-                    handelUserUpdate();
-                }
-               
-
-             return;
-            }
+            
+       
+    } else {
+        System.out.println("Previous password dont match");
+        handelUserUpdate();
+    }
+}}
+            
         }
         
 
     }
-
-
-}

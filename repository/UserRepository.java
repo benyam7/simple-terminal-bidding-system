@@ -23,21 +23,19 @@ public class UserRepository   implements UserService, Repository{
     }
 
     @Override
-    public String updateUser(String id) {
-        // for(int i = 0; i < this.database.length ; i++){
-        //     if(this.database[i].id == id){
-
-        //     }
-        // }
-        System.out.println("User updated");
-        return null;
+    public boolean updateUser(String id, String username, String password) {
+     
+        ArrayList<User> users = (ArrayList<User>) db.get("users");
+        for (User user : users){
+            if(user.getId().equals(id)){
+                user.setPassword(password);
+                user.setUserName(username);
+            }}
+            
+        return true;
     }
 
-    @Override
-    public String deleteUser(String id) {
-        System.out.println("User deleted");
-        return null;
-    }
+ 
 
     @Override
     public User getPublicProfile(String id) {
@@ -60,6 +58,25 @@ public class UserRepository   implements UserService, Repository{
         
         ArrayList<User> users =  (ArrayList<User>) this.db.get("users");
         return users;   
+    }
+    @Override
+    public boolean deleteUser(String username) {
+       
+        ArrayList<User> users = (ArrayList<User>) db.get("users");
+
+            for (User user : users){
+                if(user.getUsername().equals(username)){
+                    // found the user to delet
+                    // validate by previous password
+                    // allow user to delete
+                    // take back to login
+                    users.remove(user);
+                    return true;
+                }
+            }
+            return false;
+    
+        
     }
 
     
